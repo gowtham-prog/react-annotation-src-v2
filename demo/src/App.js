@@ -8,6 +8,7 @@ import Root from './components/Root';
 import Home from './components/Home';
 import Docs from './components/Docs';
 import Footer from './components/Footer';
+import Multiple from './components/Samples/Multiple';
 
 const Main = styled.main`
   margin: 0 16px;

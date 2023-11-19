@@ -25,7 +25,7 @@ const Button = styled.div`
   text-align: center;
   text-shadow: 0 1px 0 rgba(0,0,0,0.1);
   width: 100%;
-
+  cursor:pointer;
   transition: background 0.21s ease-in-out;
 
   &:focus, &:hover {

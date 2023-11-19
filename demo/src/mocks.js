@@ -1,16 +1,14 @@
-import {
-  RectangleSelector,
-  OvalSelector
-} from '../../src/selectors'
+import { RectangleSelector, OvalSelector } from '../../src/selectors'
 
 export default {
   annotations: [
     {
-      geometry:
-      {
+      geometry: {
         type: RectangleSelector.TYPE,
         x: 25,
         y: 31,
+        xPx: 176,
+        yPx: 160,
         width: 21,
         height: 35
       },
@@ -20,12 +18,13 @@ export default {
       }
     },
     {
-      geometry:
-      {
+      geometry: {
         type: OvalSelector.TYPE,
         x: 53,
         y: 33,
-        width : 17.5,
+        xPx: 375,
+        yPx: 165,
+        width: 17.5,
         height: 28
       },
       data: {

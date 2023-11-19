@@ -28,6 +28,7 @@ const Container = styled.div`
     0px 2px 2px 0px rgba(0, 0, 0, 0.14),
     0px 3px 1px -2px rgba(0, 0, 0, 0.12);
   transform-origin: top left;
+  z-index: 1000;
   animation: ${fadeInScale} 0.31s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 `;
 
@@ -43,7 +44,8 @@ function Editor (props) {
         left: `${geometry.type === 'POLYGON' ? getHorizontallyCentralPoint(geometry.points) + '%' : geometry.x + '%'}`,
         top: `${geometry.type === 'POLYGON'
         ? `${getVerticallyLowestPoint(geometry.points) + 10 * (1 / 5) + 10 * (4 / 5)*(1/10)}%`
-        : `${geometry.y + geometry.height}%`}`,        ...props.style
+        : `${geometry.y + geometry.height}%`}
+        `,        ...props.style
       }}
     >
       <TextEditor

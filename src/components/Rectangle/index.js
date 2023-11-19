@@ -1,34 +1,74 @@
 import React from 'react';
-import styled from 'styled-components';
-
-const Container = styled.div`
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
-  width: 100%;
-  background-color:rgba(128, 0, 0, 0.5); 
-  border: 2px dashed red; 
-  box-sizing: border-box;
-  transition: box-shadow 0.21s ease-in-out;
-  box-shadow: ${({ active }) => (active === 'true' ? '0 0 3px 3px black inset' : 'none')};
-`;
+import { Rnd as Resizable } from 'react-rnd';
 
 function Rectangle(props) {
-  const { geometry } = props.annotation;
+  const { geometry, data } = props.annotation;
+
   if (!geometry) return null;
 
+  const handleDragStop = (e, d) => {
+    if (
+      props.annotation.geometry.xPx !== d.x ||
+      props.annotation.geometry.yPx !== d.y
+    ) {
+      props.annotation.geometry.x =
+        (d.x * props.annotation.geometry.x) / props.annotation.geometry.xPx;
+      props.annotation.geometry.y =
+        (d.y * props.annotation.geometry.y) / props.annotation.geometry.yPx;
+      props.annotation.geometry.xPx = d.x;
+      props.annotation.geometry.yPx = d.y;
+      props.onChange(props.annotation);
+      props.onSubmit();
+    }
+  };
+
+  const handleResizeStop = (e, direction, ref, d) => {
+    const newAnnotation = {
+      ...props.annotation,
+      geometry: {
+        ...props.annotation.geometry,
+        xPx: props.annotation.geometry.xPx - d.width,
+        yPx: props.annotation.geometry.yPx - d.height,
+        width: parseFloat(ref.style.width),
+        height: parseFloat(ref.style.height),
+      },
+    };
+
+    if (direction.includes('top') || direction.includes('left')) {
+      newAnnotation.geometry.x =
+        (props.annotation.geometry.xPx - d.width) *
+        props.annotation.geometry.x /
+        props.annotation.geometry.xPx;
+      newAnnotation.geometry.y =
+        (props.annotation.geometry.yPx - d.height) *
+        props.annotation.geometry.y /
+        props.annotation.geometry.yPx;
+    }
+
+    props.onChange(newAnnotation);
+    props.onSubmit();
+  };
+
   return (
-    <Container
-      className={props.className}
+    <Resizable
+      id={data.id}
       style={{
-        left: `${geometry.x}%`,
-        top: `${geometry.y}%`,
-        height: `${geometry.height}%`,
-        width: `${geometry.width}%`,
-        ...props.style,
+        border: 'dashed 2px red',
+        pointerEvents: 'auto',
+        zIndex: 10,
+        backgroundColor: 'rgba(128, 0, 0, 0.5)',
       }}
-      active={props.active ? 'true' : 'false'} // Convert boolean to string
+      bounds="parent"
+      onDragStop={handleDragStop}
+      onResizeStop={handleResizeStop}
+      position={{
+        x: geometry.xPx,
+        y: geometry.yPx,
+      }}
+      size={{
+        width: `${geometry.width}%`,
+        height: `${geometry.height}%`,
+      }}
     />
   );
 }

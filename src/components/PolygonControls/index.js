@@ -40,7 +40,6 @@ const Button = styled.a`
   background-color: white;
   cursor: pointer;
   transition: background-color 0.3s ease;
-
   &:hover {
     background-color: #3699FF;
   }
@@ -67,8 +66,9 @@ function PolygonControls(props) {
         position: 'absolute',
         left: `${getHorizontallyCentralPoint(geometry.points)}%`,
         top: `${getVerticallyLowestPoint(geometry.points) + (10 * (1 / 5) + 10 * (4 / 5) * zoomBetweenZeroAndOne)}%`,
+        zIndex: 1000,
         ...props.style,
-      }}
+      }}z
     >
       <Container className={props.className}>
         {geometry.points.length >= 2 && (

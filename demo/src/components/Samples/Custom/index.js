@@ -53,8 +53,8 @@ function renderHighlight ({ annotation, active }) {
       geometry={geometry}
       style={{
         border: 'solid 1px black',
-        boxShadow: active
-          && '0 0 20px 20px rgba(255, 255, 255, 0.3) inset'
+        // boxShadow: active
+        //   && '0 0 20px 20px rgba(255, 255, 255, 0.3) inset'
       }}
     >
       Custom Highlight

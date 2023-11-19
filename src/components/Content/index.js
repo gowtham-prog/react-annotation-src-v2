@@ -3,17 +3,18 @@ import styled from 'styled-components';
 import { getHorizontallyCentralPoint, getVerticallyLowestPoint } from '../../utils/pointsUtils';
 
 const Container = styled.div`
-  background: white;
-  border-radius:6px; 
-  box-shadow:
-    0px 1px 5px 0px rgba(0, 0, 0, 0.2),
-    0px 2px 2px 0px rgba(0, 0, 0, 0.14),
-    0px 3px 1px -2px rgba(0, 0, 0, 0.12);
-  padding: 6px 10px; 
-  margin-top: 8px;
-  margin-left: 8px;
-  color: black; 
-  font-weight: bold; 
+background: white;
+border-radius:6px; 
+box-shadow:
+  0px 1px 5px 0px rgba(0, 0, 0, 0.2),
+  0px 2px 2px 0px rgba(0, 0, 0, 0.14),
+  0px 3px 1px -2px rgba(0, 0, 0, 0.12);
+padding: 6px 10px; 
+margin-top: 8px;
+margin-left: 8px;
+color: black; 
+font-weight: bold; 
+
 `;
 
 function Content(props) {
@@ -26,13 +27,16 @@ function Content(props) {
         position: 'absolute',
         left: `${geometry.type === 'POLYGON' ? getHorizontallyCentralPoint(geometry.points) + '%' : geometry.x + '%'}`,
         top: `${geometry.type === 'POLYGON'
-        ? `${getVerticallyLowestPoint(geometry.points) + 10 * (1 / 5) + 10 * (4 / 5)*(1/100)}%`
-        : `${geometry.y + geometry.height}%`}`,        ...props.style
+        ? `${getVerticallyLowestPoint(geometry.points) + 10 * (1 / 5) + 10 * (4 / 5)*(1/10000)}%`
+        : `${geometry.y + geometry.height}%`}`,
+        zIndex:100,        ...props.style
       }}
       className={props.className}
       geometry={geometry}
+      
     >
-      {props.annotation.data && props.annotation.data.text}
+      {props.annotation.data &&  props.annotation.data.text }
+      
     </Container>
   );
 }

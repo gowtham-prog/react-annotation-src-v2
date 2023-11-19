@@ -1,14 +1,14 @@
-import { getCoordPercentage } from '../utils/offsetCoordinates';
+import { getCoordPercentage } from '../utils/offsetCoordinates'
 const MARGIN = 6
 
-const marginToPercentage = (container) => ({
-  marginX: MARGIN / container.width * 100,
-  marginY: MARGIN / container.height * 100
+const marginToPercentage = container => ({
+  marginX: (MARGIN / container.width) * 100,
+  marginY: (MARGIN / container.height) * 100
 })
 
-export const TYPE = 'POINT'
 
-export function intersects ({ x, y }, geometry, container) {
+
+export function intersects({ x, y }, geometry, container) {
   const { marginX, marginY } = marginToPercentage(container)
 
   if (x < geometry.x - marginX) return false
@@ -19,14 +19,16 @@ export function intersects ({ x, y }, geometry, container) {
   return true
 }
 
-export function area (geometry, container) {
+export function area(geometry, container) {
   const { marginX, marginY } = marginToPercentage(container)
 
   return marginX * marginY
 }
 
+export const TYPE = "POINT"
+
 export const methods = {
-  onClick (annotation, e) {
+  onClick(annotation, e) {
     if (!annotation.geometry) {
       return {
         ...annotation,
@@ -36,16 +38,20 @@ export const methods = {
           mode: 'EDITING'
         },
         geometry: {
+          id: Math.random(),
           ...annotation.geometry,
           ...getCoordPercentage(e),
           width: 0,
           height: 0,
-          type: TYPE,
+          type: TYPE
         }
       }
-    } else{
+    } else {
       return {}
     }
+  },
+  onDragStop(e, d, annotation) {
+    console.log('MOVED')
   }
 }
 
