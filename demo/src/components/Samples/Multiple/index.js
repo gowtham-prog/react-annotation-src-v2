@@ -35,7 +35,9 @@ export default class Multiple extends Component {
           id: Math.random()
         }
       })
+      
     })
+    console.log("ksjb",annotation)
   }
 
   onChangeType = (e) => {

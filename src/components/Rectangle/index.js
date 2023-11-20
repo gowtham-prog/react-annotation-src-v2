@@ -1,59 +1,57 @@
-import React from 'react';
+import React, {useState,useLayoutEffect} from 'react';
 import { Rnd as Resizable } from 'react-rnd';
 
 function Rectangle(props) {
-  const { geometry, data } = props.annotation;
+  const { geometry, data,selection } = props.annotation;
 
   if (!geometry) return null;
+  const [parentDimensions, setParentDimensions] = useState({ width: 0, height: 0 });
+  useLayoutEffect(() => {
+    const updateParentDimensions = () => {
+      const parent = document.getElementById('container-RIA');
+      const { width, height } = parent.getBoundingClientRect();
+      setParentDimensions({ width, height });
+    };
+
+    const handleLoad = () => {
+      updateParentDimensions();
+    };
+    updateParentDimensions();
+
+    window.addEventListener('load', handleLoad);
+
+    return () => {
+      window.removeEventListener('load', handleLoad);
+    };
+  }, [props.annotation]); 
+
+  if (!parentDimensions.width || !parentDimensions.height) {
+    return null;
+  }
+  
 
   const handleDragStop = (e, d) => {
-    if (
-      props.annotation.geometry.xPx !== d.x ||
-      props.annotation.geometry.yPx !== d.y
-    ) {
-      props.annotation.geometry.x =
-        (d.x * props.annotation.geometry.x) / props.annotation.geometry.xPx;
-      props.annotation.geometry.y =
-        (d.y * props.annotation.geometry.y) / props.annotation.geometry.yPx;
-      props.annotation.geometry.xPx = d.x;
-      props.annotation.geometry.yPx = d.y;
-      props.onChange(props.annotation);
-      props.onSubmit();
+    if (!selection) {
+      props.annotation.geometry.x = Math.round((d.x / parentDimensions.width) * 100)
+      props.annotation.geometry.y = Math.round((d.y / parentDimensions.height) * 100)
+      props.onSubmit()
     }
   };
 
   const handleResizeStop = (e, direction, ref, d) => {
-    const newAnnotation = {
-      ...props.annotation,
-      geometry: {
-        ...props.annotation.geometry,
-        xPx: props.annotation.geometry.xPx - d.width,
-        yPx: props.annotation.geometry.yPx - d.height,
-        width: parseFloat(ref.style.width),
-        height: parseFloat(ref.style.height),
-      },
-    };
-
-    if (direction.includes('top') || direction.includes('left')) {
-      newAnnotation.geometry.x =
-        (props.annotation.geometry.xPx - d.width) *
-        props.annotation.geometry.x /
-        props.annotation.geometry.xPx;
-      newAnnotation.geometry.y =
-        (props.annotation.geometry.yPx - d.height) *
-        props.annotation.geometry.y /
-        props.annotation.geometry.yPx;
+    if(!selection){
+      props.annotation.geometry.width = parseFloat(ref.style.width)
+      props.annotation.geometry.height = parseFloat(ref.style.height)
+      props.onSubmit()
     }
-
-    props.onChange(newAnnotation);
-    props.onSubmit();
   };
+
 
   return (
     <Resizable
       id={data.id}
       style={{
-        border: 'dashed 2px red',
+        border: 'dashed 3px red',
         pointerEvents: 'auto',
         zIndex: 10,
         backgroundColor: 'rgba(128, 0, 0, 0.5)',
@@ -62,9 +60,10 @@ function Rectangle(props) {
       onDragStop={handleDragStop}
       onResizeStop={handleResizeStop}
       position={{
-        x: geometry.xPx,
-        y: geometry.yPx,
+        y: Math.round((geometry.y*parentDimensions.height)/100),
+        x: Math.round((geometry.x*parentDimensions.width)/100),
       }}
+
       size={{
         width: `${geometry.width}%`,
         height: `${geometry.height}%`,

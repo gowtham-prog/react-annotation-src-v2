@@ -44,7 +44,7 @@ function Editor (props) {
         left: `${geometry.type === 'POLYGON' ? getHorizontallyCentralPoint(geometry.points) + '%' : geometry.x + '%'}`,
         top: `${geometry.type === 'POLYGON'
         ? `${getVerticallyLowestPoint(geometry.points) + 10 * (1 / 5) + 10 * (4 / 5)*(1/10)}%`
-        : `${geometry.y + geometry.height}%`}
+        : `${geometry.y + geometry.height+ 3}%`}
         `,        ...props.style
       }}
     >

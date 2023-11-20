@@ -1,18 +1,34 @@
-import React from 'react'
-import styled from 'styled-components'
+import React, { useLayoutEffect, useState } from 'react'
 import { Rnd as Resizable } from 'react-rnd'
-
-const Container = styled.div`
-  border: dashed 2px black;
-  border-radius: 100%;
-  box-shadow: 0px 0px 1px 1px white inset;
-  box-sizing: border-box;
-  transition: box-shadow 0.21s ease-in-out;
-`
 
 function Oval(props) {
   const { onChange, onSubmit, annotation } = props
   const { geometry, data, selection } = annotation
+  const [parentDimensions, setParentDimensions] = useState({ width: 0, height: 0 });
+  useLayoutEffect(() => {
+    const updateParentDimensions = () => {
+      const parent = document.getElementById('container-RIA');
+      const { width, height } = parent.getBoundingClientRect();
+      setParentDimensions({ width, height });
+    };
+
+    const handleLoad = () => {
+      updateParentDimensions();
+    };
+    updateParentDimensions();
+
+    window.addEventListener('load', handleLoad);
+
+    return () => {
+      window.removeEventListener('load', handleLoad);
+    };
+  }, [props.annotation]); 
+
+  if (!parentDimensions.width || !parentDimensions.height) {
+    return null;
+  }
+  
+
   if (!geometry) return null
 
   return (
@@ -24,30 +40,19 @@ function Oval(props) {
         boxSizing: 'border-box',
         transition: 'box-shadow 0.21s ease-in-out',
         position: 'absolute',
-        backgroundColor : 'rgba(128, 0, 0, 0.5)',
+        backgroundColor: 'rgba(128, 0, 0, 0.5)',
         zIndex: 100,
-
-        boxShadow: props.active && '0 0 1px 1px yellow inset',
         ...props.style
       }}
-      bounds = "parent"
+      bounds="parent"
       size={{
         height: `${geometry.height}%`,
         width: `${geometry.width}%`
       }}
       onDragStop={(e, d, k) => {
-        if (
-          !selection &&
-          (props.annotation.geometry.xPx !== d.x ||
-            props.annotation.geometry.yPx !== d.y)
-        ) {
-          props.annotation.geometry.x =
-            (d.x * props.annotation.geometry.x) / props.annotation.geometry.xPx
-          props.annotation.geometry.y =
-            (d.y * props.annotation.geometry.y) / props.annotation.geometry.yPx
-          props.annotation.geometry.xPx = d.x
-          props.annotation.geometry.yPx = d.y
-       
+        if (!selection) {
+          props.annotation.geometry.x = Math.round((d.x / parentDimensions.width) * 100)
+          props.annotation.geometry.y = Math.round((d.y / parentDimensions.height) * 100)
           props.onSubmit()
         }
       }}
@@ -56,34 +61,19 @@ function Oval(props) {
           ? { bottom: true, top: true, left: true, right: true }
           : false
       }
+      disableDragging = {
+        !geometry ? false: true
+      }
       onResizeStop={(e, direction, ref, d) => {
         if (!selection) {
-          var newAnnotation = Object.assign({}, props.annotation)
-          if (
-            direction === 'top' ||
-            direction === 'left' ||
-            direction === 'topLeft'
-          ) {
-            props.annotation.geometry.x =
-              ((newAnnotation.geometry.xPx - d.width) *
-                props.annotation.geometry.x) /
-              props.annotation.geometry.xPx
-            props.annotation.geometry.y =
-              ((newAnnotation.geometry.yPx - d.height) *
-                props.annotation.geometry.y) /
-              props.annotation.geometry.yPx
-            newAnnotation.geometry.xPx -= d.width
-            newAnnotation.geometry.yPx -= d.height
-          }
-          newAnnotation.geometry.width = parseFloat(ref.style.width)
-          newAnnotation.geometry.height = parseFloat(ref.style.height)
-
+          props.annotation.geometry.width = parseFloat(ref.style.width)
+          props.annotation.geometry.height = parseFloat(ref.style.height)
           props.onSubmit()
         }
       }}
       position={{
-        x: geometry.xPx,
-        y: geometry.yPx
+        x: Math.round((geometry.x * parentDimensions.width) / 100),
+        y: Math.round((geometry.y * parentDimensions.height) / 100),
       }}
     />
   )

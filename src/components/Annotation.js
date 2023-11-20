@@ -59,7 +59,7 @@ class Annotation extends Component {
   
   };
   
-  
+
   getSelectorByType = (type) => {
     return this.props.selectors.find((s) => s.TYPE === type);
   };
@@ -191,7 +191,7 @@ class Annotation extends Component {
         style={this.props.style}
         ref={isMouseHovering.ref}
         onMouseLeave={this.onTargetMouseLeave}
-        
+        id = "container-RIA"
       >
         <Img
           className={this.props.className}
