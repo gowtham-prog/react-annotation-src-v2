@@ -24,22 +24,40 @@ export default class Multiple extends Component {
   }
 
   onSubmit = (annotation) => {
-    const { geometry, data } = annotation
-
-    this.setState({
-      annotation: {},
-      annotations: this.state.annotations.concat({
-        geometry,
-        data: {
-          ...data,
-          id: Math.random()
-        }
-      })
-      
-    })
-    console.log("ksjb",annotation)
-  }
-
+    const { geometry, data } = annotation;
+    console.log("annotation", annotation)
+    if (data && data.id) {
+      // If data.id exists, modify the geometry of the annotation with that id
+      const updatedAnnotations = this.state.annotations.map((existingAnnotation) =>
+        existingAnnotation.data && existingAnnotation.data.id === data.id
+          ? { ...existingAnnotation, geometry }
+          : existingAnnotation
+      );
+  
+      this.setState({
+        annotation: {},
+        annotations: updatedAnnotations,
+      });
+    } else {
+      // If data.id does not exist, add a new annotation
+      this.setState((prevState) => ({
+        annotation: {},
+        annotations: [
+          ...prevState.annotations,
+          {
+            geometry,
+            data: {
+              ...data,
+              id: Math.random(),
+            },
+          },
+        ],
+      }));
+    }
+  
+    console.log("state", this.state);
+  };
+  
   onChangeType = (e) => {
     this.setState({
       annotation: {},

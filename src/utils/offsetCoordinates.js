@@ -14,6 +14,13 @@ function getOffsetCoordinates(e, container) {
   }
 }
 
+function pxToPercentage(px, total){
+  return Math.round((px /total) * 100);
+}
+
+function percentageToPx(percentage, total){
+  return Math.round((percentage*total)/100)
+}
 function getOffsetCoordPercentage(e, container) {
   const { offsetX, offsetY } = getOffsetCoordinates(e, container)
   return {
@@ -28,4 +35,4 @@ function getCoordPercentage(e) {
   return getOffsetCoordPercentage(e, e.currentTarget)
 }
 
-export { getOffsetCoordPercentage, getCoordPercentage }
+export { getOffsetCoordPercentage, getCoordPercentage,pxToPercentage ,percentageToPx}

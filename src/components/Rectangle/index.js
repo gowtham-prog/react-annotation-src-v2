@@ -1,8 +1,9 @@
 import React, {useState,useLayoutEffect} from 'react';
 import { Rnd as Resizable } from 'react-rnd';
+import { percentageToPx, pxToPercentage } from '../../utils/offsetCoordinates';
 
 function Rectangle(props) {
-  const { geometry, data,selection } = props.annotation;
+  const { geometry, data } = props.annotation;
 
   if (!geometry) return null;
   const [parentDimensions, setParentDimensions] = useState({ width: 0, height: 0 });
@@ -19,9 +20,11 @@ function Rectangle(props) {
     updateParentDimensions();
 
     window.addEventListener('load', handleLoad);
+    window.addEventListener('resize', handleLoad)
 
     return () => {
       window.removeEventListener('load', handleLoad);
+      window.removeEventListener('resize', handleLoad)
     };
   }, [props.annotation]); 
 
@@ -31,19 +34,22 @@ function Rectangle(props) {
   
 
   const handleDragStop = (e, d) => {
-    if (!selection) {
-      props.annotation.geometry.x = Math.round((d.x / parentDimensions.width) * 100)
-      props.annotation.geometry.y = Math.round((d.y / parentDimensions.height) * 100)
-      props.onSubmit()
-    }
+    const newX = pxToPercentage(d.x,parentDimensions.width) ;
+    const newY = pxToPercentage(d.y,parentDimensions.height) ;
+    geometry.x = newX;
+    geometry.y = newY;
+    props.onChange(props.annotation);
+    props.onModify(props.annotation);
   };
 
-  const handleResizeStop = (e, direction, ref, d) => {
-    if(!selection){
-      props.annotation.geometry.width = parseFloat(ref.style.width)
-      props.annotation.geometry.height = parseFloat(ref.style.height)
-      props.onSubmit()
-    }
+  const handleResizeStop = (e, direction, ref, d) => { 
+    const newWidth = parseFloat(ref.style.width);
+    const newHeight = parseFloat(ref.style.height);
+    geometry.width = newWidth;
+    geometry.height = newHeight;
+    props.onChange(props.annotation);
+    props.onModify(props.annotation);
+  
   };
 
 
@@ -60,10 +66,10 @@ function Rectangle(props) {
       onDragStop={handleDragStop}
       onResizeStop={handleResizeStop}
       position={{
-        y: Math.round((geometry.y*parentDimensions.height)/100),
-        x: Math.round((geometry.x*parentDimensions.width)/100),
+        y: percentageToPx(geometry.y,parentDimensions.height),
+        x: percentageToPx(geometry.x,parentDimensions.width),
       }}
-
+      
       size={{
         width: `${geometry.width}%`,
         height: `${geometry.height}%`,

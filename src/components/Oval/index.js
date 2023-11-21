@@ -1,9 +1,9 @@
 import React, { useLayoutEffect, useState } from 'react'
 import { Rnd as Resizable } from 'react-rnd'
+import { percentageToPx, pxToPercentage } from '../../utils/offsetCoordinates';
 
 function Oval(props) {
-  const { onChange, onSubmit, annotation } = props
-  const { geometry, data, selection } = annotation
+  const { geometry, data, selection } = props.annotation
   const [parentDimensions, setParentDimensions] = useState({ width: 0, height: 0 });
   useLayoutEffect(() => {
     const updateParentDimensions = () => {
@@ -18,9 +18,11 @@ function Oval(props) {
     updateParentDimensions();
 
     window.addEventListener('load', handleLoad);
+    window.addEventListener('resize', handleLoad)
 
     return () => {
       window.removeEventListener('load', handleLoad);
+      window.removeEventListener('resize', handleLoad)
     };
   }, [props.annotation]); 
 
@@ -50,11 +52,12 @@ function Oval(props) {
         width: `${geometry.width}%`
       }}
       onDragStop={(e, d, k) => {
-        if (!selection) {
-          props.annotation.geometry.x = Math.round((d.x / parentDimensions.width) * 100)
-          props.annotation.geometry.y = Math.round((d.y / parentDimensions.height) * 100)
-          props.onSubmit()
-        }
+        const newX = pxToPercentage(d.x, parentDimensions.width);
+        const newY = pxToPercentage(d.y, parentDimensions.height);
+        geometry.x = newX;
+        geometry.y = newY;
+        props.onChange(props.annotation);
+        props.onModify(props.annotation);
       }}
       enableResizing={
         !selection
@@ -62,18 +65,19 @@ function Oval(props) {
           : false
       }
       disableDragging = {
-        !geometry ? false: true
+        !selection ? false: true
       }
       onResizeStop={(e, direction, ref, d) => {
-        if (!selection) {
-          props.annotation.geometry.width = parseFloat(ref.style.width)
-          props.annotation.geometry.height = parseFloat(ref.style.height)
-          props.onSubmit()
-        }
+        const newWidth = parseFloat(ref.style.width);
+        const newHeight = parseFloat(ref.style.height);
+        geometry.width = newWidth;
+        geometry.height = newHeight;
+        props.onChange(props.annotation);
+        props.onModify(props.annotation);
       }}
       position={{
-        x: Math.round((geometry.x * parentDimensions.width) / 100),
-        y: Math.round((geometry.y * parentDimensions.height) / 100),
+        y: percentageToPx(geometry.y,parentDimensions.height),
+        x: percentageToPx(geometry.x,parentDimensions.width),
       }}
     />
   )

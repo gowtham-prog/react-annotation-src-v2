@@ -130,6 +130,10 @@ class Annotation extends Component {
     this.props.onSubmit(this.props.value);
   };
 
+  onModify = (annotation) => {
+    this.props.onSubmit(annotation)
+  }
+
   callSelectorMethod = (methodName, e) => {
     if (this.props.disableAnnotation) {
       return;
@@ -209,9 +213,7 @@ class Annotation extends Component {
                 key: annotation.data.id,
                 annotation: annotation,
                 onChange: this.props.onChange,
-                onSubmit: this.onSubmit,
-                cHeight : this.props.relativeMousePos.cHeight,
-                cWidth : this.props.relativeMousePos.cWidth
+                onModify: this.onModify,
                 // active: this.shouldAnnotationBeActive(annotation, topAnnotationAtMouse)
               })
             )}
@@ -300,7 +302,6 @@ Annotation.propTypes = {
   }),
   onChange: PropTypes.func,
   onSubmit: PropTypes.func,
-
   activeAnnotationComparator: PropTypes.func,
   activeAnnotations: PropTypes.arrayOf(PropTypes.any),
 

@@ -21,7 +21,6 @@ import {
 export default {
   ref: () => {},
   onChange: () => {},
-  onLoad: () => {},
   onSubmit: () => {},
   type: PolygonSelector.TYPE,
   selectors: [
@@ -71,7 +70,7 @@ export default {
       imageZoomAmount={imageZoomAmount}
     />
   ),
-  renderHighlight: ({ key, annotation, onChange, onSubmit, cHeight, cWidth }) => {
+  renderHighlight: ({ key, annotation, onChange, onModify }) => {
     if (annotation && annotation.geometry && annotation.geometry.type) {
       switch (annotation.geometry.type) {
         case RectangleSelector.TYPE:
@@ -80,7 +79,7 @@ export default {
               key={key}
               annotation={annotation}
               onChange={onChange}
-              onSubmit={onSubmit}            
+              onModify={onModify}            
             />
           );
   
@@ -90,7 +89,7 @@ export default {
               key={key}
               annotation={annotation}
               onChange={onChange}
-              onSubmit={onSubmit}
+              onModify={onModify}
             />
           );
         case PointSelector.TYPE:
@@ -99,7 +98,7 @@ export default {
               key={key}
               annotation={annotation}
               onChange={onChange}
-              onSubmit={onSubmit}
+              onModify={onModify}
             />
           );
         case OvalSelector.TYPE:
@@ -108,9 +107,7 @@ export default {
               key={key}
               annotation={annotation}
               onChange={onChange}
-              onSubmit={onSubmit}
-              cHeight = {cHeight}
-              cWidth = {cWidth} 
+              onModify={onModify}
             />
           );
         case PolygonSelector.TYPE:
@@ -119,7 +116,7 @@ export default {
               key={key}
               annotation={annotation}
               onChange={onChange}
-              onSubmit={onSubmit}  
+              onModify={onModify}  
             />
           );
         default:
