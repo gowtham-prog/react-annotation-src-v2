@@ -1,0 +1,19 @@
+onDragStop={(e, d, k) => {
+        const parent = e.target.offsetParent;
+        const {width : clientX,height: clientY} = parent.getBoundingClientRect();
+
+        console.log("clientt", clientX, clientY)
+        if (
+          !selection 
+          // (props.annotation.geometry.xPx !== d.x ||
+          //   props.annotation.geometry.yPx !== d.y)
+        ) {
+       
+          console.log("d",d)
+          console.log("sum",d.x/clientX)
+          props.annotation.geometry.x = (d.x/clientX)*100
+          props.annotation.geometry.y = (d.y/clientY)*100
+          console.log("ann", props.annotation)
+          props.onSubmit();
+        }
+      }}

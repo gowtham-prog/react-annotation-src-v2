@@ -8,12 +8,13 @@ import { PolygonSelector } from '../selectors';
 import defaultProps from './defaultProps';
 import Overlay from './Overlay';
 
+
 const Container = styled.div`
   clear: both;
   position: relative;
   width: 100%;
   &:hover ${Overlay} {
-    opacity: 0;
+    opacity: 1;
   }
 `;
 
@@ -53,9 +54,11 @@ class Annotation extends Component {
 
   setInnerRef = (el) => {
     this.container = el;
+    this.props.ref(el);  
     this.props.relativeMousePos.ref(el);
-    this.props.ref(el);
+  
   };
+  
 
   getSelectorByType = (type) => {
     return this.props.selectors.find((s) => s.TYPE === type);
@@ -110,6 +113,7 @@ class Annotation extends Component {
     }
   };
 
+
   onSelectionComplete = () => {
     this.callSelectorMethod('onSelectionComplete');
   };
@@ -125,6 +129,10 @@ class Annotation extends Component {
   onSubmit = () => {
     this.props.onSubmit(this.props.value);
   };
+
+  onModify = (annotation) => {
+    this.props.onSubmit(annotation)
+  }
 
   callSelectorMethod = (methodName, e) => {
     if (this.props.disableAnnotation) {
@@ -166,6 +174,7 @@ class Annotation extends Component {
 
   render() {
     const { props } = this
+    
     const {
       isMouseHovering,
       renderHighlight,
@@ -174,36 +183,45 @@ class Annotation extends Component {
       renderEditor,
       renderOverlay,
       renderPolygonControls,
-      topAnnotationAtMouse,
-      allowTouch
     } = props
+
+    const topAnnotationAtMouse = this.getTopAnnotationAt(
+      this.props.relativeMousePos.x,
+      this.props.relativeMousePos.y
+    )
 
     return (
       <Container
         style={this.props.style}
-        innerRef={isMouseHovering.ref}
+        ref={isMouseHovering.ref}
         onMouseLeave={this.onTargetMouseLeave}
-        
+        id = "container-RIA"
       >
         <Img
           className={this.props.className}
           style={this.props.style}
+          // onLoad={onImageLoad}
           alt={this.props.alt}
           src={this.props.src}
           draggable={false}
-          innerRef={this.setref}
+          ref={this.setInnerRef}
         />
+        
         <Items>
-          {this.props.annotations.map(annotation =>
-            renderHighlight({
-              key: annotation.data.id,
-              annotation: annotation,
-              active: this.shouldAnnotationBeActive(annotation, topAnnotationAtMouse)
-            })
-          )}
-          {!this.props.disableSelector && this.props.value && this.props.value.geometry &&
-            renderSelector({ annotation: this.props.value })}
+            {this.props.annotations.map(annotation =>
+              renderHighlight({
+                key: annotation.data.id,
+                annotation: annotation,
+                onChange: this.props.onChange,
+                onModify: this.onModify,
+                // active: this.shouldAnnotationBeActive(annotation, topAnnotationAtMouse)
+              })
+            )}
+
+            {!this.props.disableSelector && this.props.value && this.props.value.geometry &&
+              renderSelector({ annotation: this.props.value })}
         </Items>
+          
         <Target
           onClick={this.onClick}
           onMouseUp={this.onMouseUp}
@@ -249,7 +267,7 @@ class Annotation extends Component {
 }
 
 Annotation.propTypes = {
-  innerRef: PropTypes.func,
+  ref: PropTypes.func,
   onMouseUp: PropTypes.func,
   onMouseDown: PropTypes.func,
   onMouseMove: PropTypes.func,
@@ -259,7 +277,6 @@ Annotation.propTypes = {
   // This function is run before the onClick callback is executed (onClick
   // is only called if onClickCheckFunc resolve to true or doesn't exist)
   onClickCheckFunc: PropTypes.func,
-  // For Polygon Selector
   onSelectionComplete: PropTypes.func,
   onSelectionClear: PropTypes.func,
   onSelectionUndo: PropTypes.func,
@@ -284,7 +301,6 @@ Annotation.propTypes = {
   }),
   onChange: PropTypes.func,
   onSubmit: PropTypes.func,
-
   activeAnnotationComparator: PropTypes.func,
   activeAnnotations: PropTypes.arrayOf(PropTypes.any),
 

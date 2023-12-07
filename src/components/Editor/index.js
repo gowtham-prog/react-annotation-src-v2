@@ -28,22 +28,34 @@ const Container = styled.div`
     0px 2px 2px 0px rgba(0, 0, 0, 0.14),
     0px 3px 1px -2px rgba(0, 0, 0, 0.12);
   transform-origin: top left;
+  z-index: 1000;
   animation: ${fadeInScale} 0.31s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 `;
 
 function Editor (props) {
   const { geometry } = props.annotation
   if (!geometry) return null
+  const isPolygon = geometry.type === 'POLYGON';
+  const x = isPolygon ? getHorizontallyCentralPoint(geometry.points) : geometry.x;
+  const y = isPolygon ? (getVerticallyLowestPoint(geometry.points) + 10 * (1 / 5) + 10 * (4 / 5)*(1/10000)) : geometry.y;
+
+  // Adjustments for better positioning near edges
+  const leftPosition = x < 80 ? x + '%' : 'auto';
+  const topPosition = y < 80 ? (y + geometry.height) + '%' : 'auto';
+  const rightPosition = x > 80 ? (100 -x - geometry.width) + '%' : 'auto';
+  const bottomPosition = (y) > 80 ? (100 -y)  + '%' : 'auto';
 
   return (
     <Container
       className={props.className}
       style={{
         position: 'absolute',
-        left: `${geometry.type === 'POLYGON' ? getHorizontallyCentralPoint(geometry.points) + '%' : geometry.x + '%'}`,
-        top: `${geometry.type === 'POLYGON'
-        ? `${getVerticallyLowestPoint(geometry.points) + 10 * (1 / 5) + 10 * (4 / 5)*(1/10)}%`
-        : `${geometry.y + geometry.height}%`}`,        ...props.style
+        marginTop: '16px',
+        left : `${isPolygon ? x+ '%' : leftPosition}`,
+        top : `${isPolygon ? y+ '%' : topPosition}`,
+        right : rightPosition,
+        bottom : bottomPosition,
+        ...props.style
       }}
     >
       <TextEditor

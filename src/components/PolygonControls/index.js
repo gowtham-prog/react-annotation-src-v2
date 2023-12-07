@@ -40,7 +40,6 @@ const Button = styled.a`
   background-color: white;
   cursor: pointer;
   transition: background-color 0.3s ease;
-
   &:hover {
     background-color: #3699FF;
   }
@@ -61,14 +60,28 @@ function PolygonControls(props) {
   const paddingHorizontal = 0.875 / 5 * 8 + 4 / 5 * 8 * zoomBetweenZeroAndOne;
   const paddingVertical = 0.875 / 5 * 16 + 4 / 5 * 16 * zoomBetweenZeroAndOne;
 
+  const x = getHorizontallyCentralPoint(geometry.points) ;
+  const y = getVerticallyLowestPoint(geometry.points) + 10 * (1 / 5) + 10 * (4 / 5)*(1/10000) ;
+
+  // Adjustments for better positioning near edges
+  const leftPosition = x < 80 ? x + '%' : 'auto';
+  const topPosition = y < 80 ? (y) + '%' : 'auto';
+  const rightPosition = x > 80 ? (100 -x) + '%' : 'auto';
+  const bottomPosition = (y) > 80 ? (100 -y)  + '%' : 'auto';
+
   return (
     <div
       style={{
         position: 'absolute',
-        left: `${getHorizontallyCentralPoint(geometry.points)}%`,
-        top: `${getVerticallyLowestPoint(geometry.points) + (10 * (1 / 5) + 10 * (4 / 5) * zoomBetweenZeroAndOne)}%`,
+        // left: `${getHorizontallyCentralPoint(geometry.points)}%`,
+        // top: `${getVerticallyLowestPoint(geometry.points) + (10 * (1 / 5) + 10 * (4 / 5) * zoomBetweenZeroAndOne)}%`,
+        left : leftPosition,
+        top : topPosition,
+        right : rightPosition,
+        bottom : bottomPosition,
+        zIndex: 1000,
         ...props.style,
-      }}
+      }}z
     >
       <Container className={props.className}>
         {geometry.points.length >= 2 && (

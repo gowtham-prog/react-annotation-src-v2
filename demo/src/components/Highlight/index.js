@@ -3,7 +3,7 @@ import React from 'react'
 // import prism from 'react-syntax-highlighter/styles/prism/prism'
 {/* <SyntaxHighlighter language='jsx' style={prism}></SyntaxHighlighter> */}
 export default (props) => (
-  <SyntaxHighlighter >
+  <div >
     {props.children}
-  </SyntaxHighlighter>  
+  </div>  
 )

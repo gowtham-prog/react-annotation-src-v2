@@ -57,6 +57,8 @@ export default class Linked extends Component {
     })
   }
 
+
+
   onMouseOver = (id) => e => {
     this.setState({
       activeAnnotations: [

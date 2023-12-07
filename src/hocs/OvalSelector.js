@@ -1,6 +1,9 @@
-import { getCoordPercentage } from '../utils/offsetCoordinates';
-
 const square = n => Math.pow(n, 2)
+
+const getCoordPercentage = e => ({
+  x: (e.nativeEvent.offsetX / e.currentTarget.offsetWidth) * 100,
+  y: (e.nativeEvent.offsetY / e.currentTarget.offsetHeight) * 100
+})
 
 export const TYPE = 'OVAL'
 
@@ -23,90 +26,77 @@ export function area(geometry) {
 }
 
 export const methods = {
-  onTouchStart(annotation, e) {
-    return pointerDown(annotation, e)
-  },
-  onTouchEnd(annotation, e) {
-    return pointerUp(annotation, e)
-  },
-  onTouchMove(annotation, e) {
-    return pointerMove(annotation, e)
-  },
   onMouseDown(annotation, e) {
-    return pointerDown(annotation, e)
-  },
-  onMouseUp(annotation, e) {
-    return pointerUp(annotation, e)
-  },
-  onMouseMove(annotation, e) {
-    return pointerMove(annotation, e)
-  }
-}
+    if (!annotation.selection) {
+      const { x: anchorX, y: anchorY } = getCoordPercentage(e)
 
-function pointerDown(annotation, e) {
-  if (!annotation.selection) {
-    const { x: anchorX, y: anchorY } = getCoordPercentage(e)
-
-    return {
-      ...annotation,
-      selection: {
-        ...annotation.selection,
-        mode: 'SELECTING',
-        anchorX,
-        anchorY
+      return {
+        ...annotation,
+        selection: {
+          ...annotation.selection,
+          mode: 'SELECTING',
+          anchorXpX: e.nativeEvent.offsetX,
+          anchorYpX: e.nativeEvent.offsetY,
+          anchorX,
+          anchorY
+        }
       }
-    }
-  } else {
-    return {}
-  }
-  return annotation
-}
-
-function pointerUp(annotation, e) {
-  if (annotation.selection) {
-    const { selection, geometry } = annotation
-
-    if (!geometry) {
+    } else {
       return {}
     }
 
-    switch (annotation.selection.mode) {
-      case 'SELECTING':
-        return {
-          ...annotation,
-          selection: {
-            ...annotation.selection,
-            showEditor: true,
-            mode: 'EDITING'
+    return annotation
+  },
+
+  onMouseUp(annotation, e) {
+    if (annotation.selection) {
+      const { selection, geometry } = annotation
+
+      if (!geometry) {
+        return {}
+      }
+
+      switch (annotation.selection.mode) {
+        case 'SELECTING':
+          return {
+            ...annotation,
+            selection: {
+              ...annotation.selection,
+              showEditor: true,
+              mode: 'EDITING'
+            }
           }
-        }
-      default:
-        break
-    }
-  }
-  return annotation
-}
-
-function pointerMove(annotation, e) {
-  if (annotation.selection && annotation.selection.mode === 'SELECTING') {
-    const { anchorX, anchorY } = annotation.selection
-    const { x: newX, y: newY } = getCoordPercentage(e)
-    const width = newX - anchorX
-    const height = newY - anchorY
-
-    return {
-      ...annotation,
-      geometry: {
-        ...annotation.geometry,
-        type: TYPE,
-        x: width > 0 ? anchorX : newX,
-        y: height > 0 ? anchorY : newY,
-        width: Math.abs(width),
-        height: Math.abs(height)
+        default:
+          break
       }
     }
+
+    return annotation
+  },
+
+  onMouseMove(annotation, e) {
+    if (annotation.selection && annotation.selection.mode === 'SELECTING') {
+      const { anchorX, anchorY, anchorXpX, anchorYpX } = annotation.selection
+
+      const { x: newX, y: newY } = getCoordPercentage(e)
+      const width = newX - anchorX
+      const height = newY - anchorY
+
+      return {
+        ...annotation,
+        geometry: {
+          ...annotation.geometry,
+          type: TYPE,
+          x: width > 0 ? anchorX : newX,
+          y: height > 0 ? anchorY : newY,
+          width: Math.abs(width),
+          height: Math.abs(height)
+        }
+      }
+    }
+
+    return annotation
   }
-  return annotation
 }
 
 export default {

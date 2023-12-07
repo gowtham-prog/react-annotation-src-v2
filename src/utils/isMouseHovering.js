@@ -43,7 +43,7 @@ const isMouseHovering = (key = 'isMouseHovering') => DecoratedComponent => {
     render() {
       const hocProps = {
         [key]: {
-          innerRef: el => this.el = el,
+          ref: el => this.el = el,
           isHoveringOver: this.state.isHoveringOver
         }
       }

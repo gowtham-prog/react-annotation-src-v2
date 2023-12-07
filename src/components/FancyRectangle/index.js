@@ -1,11 +1,10 @@
-import React from 'react';
-import styled from 'styled-components';
+import React from 'react'
+import styled from 'styled-components'
 
 const Box = styled.div`
   background: rgba(0, 0, 0, 0.2);
   position: absolute;
-  cursor: crosshair;
-`;
+`
 
 const Container = styled.div`
   position: absolute;
@@ -13,15 +12,18 @@ const Container = styled.div`
   left: 0;
   bottom: 0;
   right: 0;
-`;
+`
 
-function FancyRectangle(props) {
-  const { geometry } = props.annotation;
+function FancyRectangle (props) {
+  const { geometry } = props.annotation
 
-  if (!geometry) return null;
+  if (!geometry) return null
 
   return (
-    <Container className={props.className} style={props.style}>
+    <Container
+      className={props.className}
+      style={props.style}
+    >
       <Box
         style={{
           height: `${geometry.y}%`,
@@ -51,12 +53,12 @@ function FancyRectangle(props) {
         }}
       />
     </Container>
-  );
+  )
 }
 
 FancyRectangle.defaultProps = {
   className: '',
   style: {}
-};
+}
 
-export default FancyRectangle;
+export default FancyRectangle
