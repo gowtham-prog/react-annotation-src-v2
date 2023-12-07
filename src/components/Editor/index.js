@@ -37,7 +37,7 @@ function Editor (props) {
   if (!geometry) return null
   const isPolygon = geometry.type === 'POLYGON';
   const x = isPolygon ? getHorizontallyCentralPoint(geometry.points) : geometry.x;
-  const y = isPolygon ? getVerticallyLowestPoint(geometry.points) : geometry.y;
+  const y = isPolygon ? (getVerticallyLowestPoint(geometry.points) + 10 * (1 / 5) + 10 * (4 / 5)*(1/10000)) : geometry.y;
 
   // Adjustments for better positioning near edges
   const leftPosition = x < 80 ? x + '%' : 'auto';
@@ -51,8 +51,8 @@ function Editor (props) {
       style={{
         position: 'absolute',
         marginTop: '16px',
-        left : leftPosition,
-        top : topPosition,
+        left : `${isPolygon ? x+ '%' : leftPosition}`,
+        top : `${isPolygon ? y+ '%' : topPosition}`,
         right : rightPosition,
         bottom : bottomPosition,
         ...props.style

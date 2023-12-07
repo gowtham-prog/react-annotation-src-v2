@@ -39,8 +39,8 @@ function Content(props) {
         // top: `${geometry.type === 'POLYGON'
         // ? `${getVerticallyLowestPoint(geometry.points) + 10 * (1 / 5) + 10 * (4 / 5)*(1/10000)}%`
         // : `${geometry.y + geometry.height}%`}`,
-        left : leftPosition,
-        top : topPosition,
+        left : `${isPolygon ? x+ '%' : leftPosition}`,
+        top : `${isPolygon ? y+ '%' : topPosition}`,
         right : rightPosition,
         bottom : bottomPosition,
         zIndex:100,        ...props.style

@@ -60,13 +60,13 @@ function PolygonControls(props) {
   const paddingHorizontal = 0.875 / 5 * 8 + 4 / 5 * 8 * zoomBetweenZeroAndOne;
   const paddingVertical = 0.875 / 5 * 16 + 4 / 5 * 16 * zoomBetweenZeroAndOne;
 
-  const x =  getHorizontallyCentralPoint(geometry.points) ;
-  const y =  getVerticallyLowestPoint(geometry.points) ;
+  const x = getHorizontallyCentralPoint(geometry.points) ;
+  const y = getVerticallyLowestPoint(geometry.points) + 10 * (1 / 5) + 10 * (4 / 5)*(1/10000) ;
 
   // Adjustments for better positioning near edges
   const leftPosition = x < 80 ? x + '%' : 'auto';
-  const topPosition = y < 80 ? (y + geometry.height) + '%' : 'auto';
-  const rightPosition = x > 80 ? (100 -x - geometry.width) + '%' : 'auto';
+  const topPosition = y < 80 ? (y) + '%' : 'auto';
+  const rightPosition = x > 80 ? (100 -x) + '%' : 'auto';
   const bottomPosition = (y) > 80 ? (100 -y)  + '%' : 'auto';
 
   return (
