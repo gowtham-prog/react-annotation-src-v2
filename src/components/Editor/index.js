@@ -50,6 +50,7 @@ function Editor (props) {
       className={props.className}
       style={{
         position: 'absolute',
+        marginTop: '16px',
         left : leftPosition,
         top : topPosition,
         right : rightPosition,

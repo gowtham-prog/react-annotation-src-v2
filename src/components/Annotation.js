@@ -277,7 +277,6 @@ Annotation.propTypes = {
   // This function is run before the onClick callback is executed (onClick
   // is only called if onClickCheckFunc resolve to true or doesn't exist)
   onClickCheckFunc: PropTypes.func,
-  // For Polygon Selector
   onSelectionComplete: PropTypes.func,
   onSelectionClear: PropTypes.func,
   onSelectionUndo: PropTypes.func,

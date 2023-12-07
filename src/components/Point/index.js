@@ -4,6 +4,8 @@ import { percentageToPx, pxToPercentage } from '../../utils/offsetCoordinates';
 
 function Point(props) {
   const { geometry, data } = props.annotation;
+  const [ view, setView] = useState(false)
+
 
   if (!geometry) return null
   const [parentDimensions, setParentDimensions] = useState({ width: 0, height: 0 });
@@ -40,8 +42,8 @@ function Point(props) {
         boxSizing: 'border-box',
         pointerEvents: 'auto',
         zIndex: 1000,
-        position: 'absolute',
-        transform: 'translate3d(-50%, -50%, 0)'
+        position: 'relative',
+        transform: 'translate3d(-50%, -50%, 0)',
       }}
       bounds="parent"
       size={{
@@ -49,11 +51,15 @@ function Point(props) {
         height: 16
       }}
       enableResizing={false}
+      onDragStart={() => setView(true)}
       onDragStop={(e, d, k) => {
         const newX = pxToPercentage(d.x, parentDimensions.width);
         const newY = pxToPercentage(d.y, parentDimensions.height);
         geometry.x = newX;
         geometry.y = newY;
+        geometry.xPx= d.x;
+        geometry.yPx= d.y;
+        setView(false)
         props.onChange(props.annotation);
         props.onModify(props.annotation);
       }}
@@ -61,7 +67,25 @@ function Point(props) {
         y: percentageToPx(geometry.y,parentDimensions.height),
         x: percentageToPx(geometry.x,parentDimensions.width),
       }}
-    />
+    >
+      {view && (
+        <span style={{ 
+          position: 'absolute',
+          bottom: '50%',
+          left: '200%',
+          backgroundColor: 'white',
+          padding: '5px',
+          border : '1px solid black',
+          borderRadius: '5px',
+          transform: 'translate(-50%, -50%)',
+          fontWeight: '400',
+          fontFamily: 'Poppins, sans-serif',
+          fontSize: '16px',
+           }}>
+          {data.text}
+        </span>
+      )}
+    </Resizable>
   )
 }
 
